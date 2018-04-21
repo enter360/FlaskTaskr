@@ -9,8 +9,8 @@ app = Flask(__name__)
 app.config.from_object('config')
 db = SQLAlchemy(app)
 
-from models import FTasks
-from forms import AddTask
+from models import FTasks, User
+from forms import AddTask, RegisterForm, LoginForm
 
 def login_required(test):
 	@wraps(test)
@@ -28,18 +28,34 @@ def logout():
 	flash('You are logged out. Bye. :(')
 	return redirect(url_for('login'))
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/', methods= ['GET', 'POST'])
 def login():
-    if request.method == 'POST':
-        if request.form['username'] != app.config['USERNAME'] \
-                or request.form['password'] != app.config['PASSWORD']:
-            error = 'Invalid Credentials. Please try again.'
-            return render_template('login.html', error=error)
-        else:
-            session['logged_in'] = True
-            flash('Welcome!')
-            return redirect(url_for('tasks'))
-    return render_template('login.html')
+	error = None
+	if request.method =='POST':
+		u = User.query.filter_by(name= request.form['name'],
+			password= request.form['password']).first()
+		if u is None:
+			error = 'Invalid  username or password'
+		else:
+			session['logged_in'] = True
+			flash('You are logged in . Go fucking crazy')
+			return redirect(url_for('tasks'))
+	return render_template("login.html", form = LoginForm(request.form), error=error)
+
+
+
+#@app.route('/', methods=['GET', 'POST'])
+#def login():
+ #   if request.method == 'POST':
+  #      if request.form['username'] != app.config['USERNAME'] \
+  #              or request.form['password'] != app.config['PASSWORD']:
+  #          error = 'Invalid Credentials. Please try again.'
+  #          return render_template('login.html', error=error)
+  #      else:
+  #          session['logged_in'] = True
+  #          flash('Welcome!')
+  #          return redirect(url_for('tasks'))
+  #  return render_template('login.html')
 	
 @app.route('/tasks/')
 @login_required
@@ -99,3 +115,19 @@ def delete_entry(task_id):
 	flash('Task was deleted')
 	return redirect(url_for('tasks'))
 
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+	error=None 
+	form = RegisterForm(request.form, csrf_enabled=False)
+	if form.validate_on_submit():
+		new_user = User(
+			form.name.data,
+			form.email.data,
+			form.password.data,
+			)
+		db.session.add(new_user)
+		db.session.commit()
+		flash('Thaks for registering. Please login. ')
+		return redirect(url_for('login'))
+	return render_template('register.html', form=form, error=error)
