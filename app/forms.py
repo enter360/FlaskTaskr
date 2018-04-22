@@ -28,5 +28,5 @@ class AddTask(Form):
 				choices=[('1','1'),('2','2'),('3','3'),('4','4'),('5','5')])
 	status = IntegerField('Status')
 	#posted_date = DateField('Posted Date (mm/dd/yyyy)', validators=[DataRequired()], format='%m/%d/%Y')
-	posted_date = DateField('Posted Date (mm/dd/yyyy)', validators=[],format='%m/%d/%Y')
+	posted_date = DateField('Posted Date (mm/dd/yyyy)', validators=[DataRequired()],format='%m/%d/%Y')
 

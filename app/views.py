@@ -79,6 +79,7 @@ def tasks():
 def new_task():
 	print ( "new_task")
 	form = AddTask(request.form, csrf_enabled=False)
+	print (form.validate_on_submit())
 	if form.validate_on_submit():
 		print ("Form validated")
 		new_task = FTasks(
@@ -94,6 +95,7 @@ def new_task():
 	else:
 		print ("Addition Failed")
 		flash('Error entry not added.')
+		print (form.errors)
 	return redirect(url_for('tasks'))
 
 @app.route('/complete/<int:task_id>/',)
