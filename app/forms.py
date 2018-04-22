@@ -20,10 +20,13 @@ class LoginForm(Form):
 
 
 class AddTask(Form):
+	print ("AddTask")
 	task_id = IntegerField('Priority')
 	name = TextField('Task Name', validators=[DataRequired()])
-	due_date = DateField('Date Due (mm/dd/yyyy)', validators=[DataRequired()],
-								format='%m/%d/%Y')
+	due_date = DateField('Date Due (mm/dd/yyyy)', validators=[DataRequired()],format='%m/%d/%Y')
 	priority = SelectField('Priority', validators=[DataRequired()],
 				choices=[('1','1'),('2','2'),('3','3'),('4','4'),('5','5')])
 	status = IntegerField('Status')
+	#posted_date = DateField('Posted Date (mm/dd/yyyy)', validators=[DataRequired()], format='%m/%d/%Y')
+	posted_date = DateField('Posted Date (mm/dd/yyyy)', validators=[],format='%m/%d/%Y')
+

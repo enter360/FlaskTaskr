@@ -57,7 +57,7 @@ def login():
   #          return redirect(url_for('tasks'))
   #  return render_template('login.html')
 	
-@app.route('/tasks/')
+@app.route('/tasks')
 @login_required
 def tasks():
 	#g.db = connect_db()
@@ -77,16 +77,23 @@ def tasks():
 @app.route('/add/', methods=['POST'])
 @login_required
 def new_task():
+	print ( "new_task")
 	form = AddTask(request.form, csrf_enabled=False)
 	if form.validate_on_submit():
+		print ("Form validated")
 		new_task = FTasks(
 			form.name.data,
 			form.due_date.data,
 			form.priority.data,
+			form.posted_date.data,
+			'1',
 			'1')
 		db.session.add(new_task)
 		db.session.commit()
 		flash('New entry was succssfully posted. Thanks')
+	else:
+		print ("Addition Failed")
+		flash('Error entry not added.')
 	return redirect(url_for('tasks'))
 
 @app.route('/complete/<int:task_id>/',)
